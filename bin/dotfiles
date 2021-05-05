@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+#
+# dotfiles
+#
+# `dotfiles` handles installation, updates, things like that. Run it periodically
+# to make sure you're on the latest and greatest.
+
+BIN_NAME=$(basename "$0")
+COMMAND_NAME=$1
+SUB_COMMAND_NAME=$2
+
+cd "$(dirname "$0")/.."
+export DOTFILES_DIR=$(pwd -P)
+
+sub_help() {
+	echo "Usage: $BIN_NAME <command>"
+	echo ""
+	echo "Options:"
+	echo "  install     Install software"
+	echo "  update      Update packages and pkg managers (OS, brew, npm, gem)"
+	echo "  dock        Apply macOS Dock settings"
+	echo "  macos       Apply macOS system defaults"
+	echo "  clean       Clean up caches (brew, nvm, gem, sdkman) and not listed brew packages"
+	echo "  edit        Open dotfiles in IDE ($EDITOR)"
+	echo "  help		Show this help message and exit"
+	exit
+}
+
+sub_clean() {
+	brew cleanup
+	gem cleanup
+	. "$NVM_DIR/nvm.sh"
+	nvm cache clear
+
+	echo "› $DOTFILES_DIR/script/clean"
+	$DOTFILES_DIR/script/clean
+}
+
+sub_edit() {
+	sh -c "$EDITOR $DOTFILES_DIR"
+}
+
+sub_update() {
+	echo "brew update..."
+	brew update
+	brew upgrade
+
+	if is-executable npm; then
+		echo "npm update global..."
+		npm update -g
+	fi
+
+	if is-executable mas; then
+		echo "Mac App Store update..."
+		mas upgrade
+	fi
+
+	if is-executable yay; then
+		echo "Pacman packages udpate..."
+		yay -Syu
+	fi
+
+	#   gem update --system
+	#   gem update
+	# sudo softwareupdate -i -a
+}
+
+sub_macos() {
+	# Set macOS defaults
+	$DOTFILES_DIR/macos/set-defaults.sh
+
+	echo "Done. Some changes may require a logout/restart to take effect."
+}
+
+sub_dock() {
+	# Update macOS Dock items
+	$DOTFILES_DIR/macos/dock.sh
+	echo "Dock reloaded."
+}
+
+sub_install() {
+	# Install software
+	echo "› $DOTFILES_DIR/script/install"
+	$DOTFILES_DIR/script/install
+}
+
+sub_bootstrap() {
+	$DOTFILES_DIR/script/bootstrap
+}
+
+sub_test() {
+	bats "$DOTFILES_DIR"/tests/*.bats
+}
+
+sub_freshstart() {
+	sudo softwareupdate -i -a
+	xcode-select --install
+	sub_bootstrap
+}
+
+case $COMMAND_NAME in
+"" | "-h" | "--help")
+	sub_help
+	;;
+*)
+	shift
+	sub_${COMMAND_NAME} $@
+	if [ $? = 127 ]; then
+		echo "'$COMMAND_NAME' is not a known command or has errors." >&2
+		sub_help
+		exit 1
+	fi
+	;;
+esac

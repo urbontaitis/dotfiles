@@ -1,0 +1,17 @@
+#compdef dotfiles
+
+# dotfiles ZSH completion function
+
+local -a _1st_arguments
+_1st_arguments=(
+    'bootstrap: Create dotfiles symlinks and install software'
+    'install: Install software'
+    'update: Update packages and pkg managers (OS, brew, npm, gem)'
+    'dock: Apply macOS Dock settings'
+  	'macos: Apply macOS system defaults' 
+  	'clean: Clean up caches (brew, nvm, gem, sdkman) and not listed brew packages'
+  	'edit: Open dotfiles in IDE'
+  	'help: Show this help message and exit'
+)
+
+_describe 'command' _1st_arguments

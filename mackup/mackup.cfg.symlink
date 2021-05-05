@@ -1,0 +1,10 @@
+[storage]
+engine = file_system
+path = OneDrive
+
+[applications_to_ignore]
+git
+maven
+zsh
+oh-my-zsh   
+mackup

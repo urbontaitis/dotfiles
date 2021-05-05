@@ -1,0 +1,1 @@
+alias sync-kindle-clippings="python3 $DOTFILES_DIR/kindle/kindle-clippings/extract-kindle-clippings.py  $KINDLE_VOLUME_DIR $KINDLE_CLIPPINGS_SYNC_DIR"

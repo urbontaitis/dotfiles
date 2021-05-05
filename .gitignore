@@ -1,0 +1,17 @@
+.DS_STORE
+git/gitconfig.local.symlink
+**/brewpackages
+cache/*
+custom/*
+!**/.keepit
+!custom/README.md
+/.idea/
+kindle/alias-env.zsh
+kindle/kindle-clippings
+/npm/npmmodules
+/homebrew/brewpackages.lock.json
+/homebrew/not-listed.txt
+/vscode/allextensions
+tests/dir3/myTestFilesCombined
+arch/temp/PacmanFile
+arch/pacmanpackages

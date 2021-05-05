@@ -1,0 +1,52 @@
+#!/bin/zsh
+#
+# Use colors, but only if connected to a terminal, and that terminal
+# supports them.
+if is-executable tput; then
+    ncolors=$(tput colors)
+fi
+if [ -t 1 ] && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
+  RED="$(tput setaf 1)"
+  GREEN="$(tput setaf 2)"
+  YELLOW="$(tput setaf 3)"
+  BLUE="$(tput setaf 4)"
+  BOLD="$(tput bold)"
+  NORMAL="$(tput sgr0)"
+else
+  RED=""
+  GREEN=""
+  YELLOW=""
+  BLUE=""
+  BOLD=""
+  NORMAL=""
+fi
+
+cd "$DOTFILES_DIR"
+
+# Set git-config values known to fix git errors
+# Line endings (#4069)
+git config core.eol lf
+git config core.autocrlf false
+# zeroPaddedFilemode fsck errors (#4963)
+git config fsck.zeroPaddedFilemode ignore
+git config fetch.fsck.zeroPaddedFilemode ignore
+git config receive.fsck.zeroPaddedFilemode ignore
+
+printf "${BLUE}%s${NORMAL}\n" "Updating Dotfiles"
+if git pull --rebase --stat origin master
+then
+  printf '%s' "$GREEN"
+  printf '%s\n' ' _____        _    __ _ _            '
+  printf '%s\n' '|  __ \      | |  / _(_) |           '
+  printf '%s\n' '| |  | | ___ | |_| |_ _| | ___  ___  '
+  printf '%s\n' '| |  | |/ _ \| __|  _| | |/ _ \/ __| '
+  printf '%s\n' '| |__| | (_) | |_| | | | |  __/\__ \ '
+  printf '%s\n' '|_____/ \___/ \__|_| |_|_|\___||___/ '
+  printf "${BLUE}%s\n Dotflies has been updated and/or is at the current version.${NORMAL}\n"
+  printf "${BLUE}%s${NORMAL}\n" "Updating software"  
+  $DOTFILES_DIR/bin/dotfiles update
+  $DOTFILES_DIR/bin/dotfiles install
+  printf "${BLUE}%s\n Update & install tasks are completed.${NORMAL}\n"
+else
+  printf "${RED}%s${NORMAL}\n" 'There was an error updating. Try again later?'
+fi

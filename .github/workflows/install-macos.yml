@@ -1,0 +1,27 @@
+name: install-macos
+
+on: 
+  push:
+    branches:
+    - master
+  schedule:
+    - cron:  '0 13 * * 6'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-latest] 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Check versions of pre-installed software/system
+      run: ./.cisupport/pre.sh
+    - name: Create fake gitconfig.local.symlink
+      run: cp ./git/gitconfig.local.symlink.example ./git/gitconfig.local.symlink
+    - name: Execute bootstrap
+      run:  ./script/bootstrap O
+    - name: Execute install
+      run:  ./bin/dotfiles install
+    - name: Check installed versions 
+      run: ./.cisupport/post.sh

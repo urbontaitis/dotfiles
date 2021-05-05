@@ -1,0 +1,2 @@
+export KINDLE_VOLUME_DIR="/Volumes/Kindle/documents/My\ Clippings.txt"
+export KINDLE_CLIPPINGS_SYNC_DIR="$HOME/OneDrive/kindle/"

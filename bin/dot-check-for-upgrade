@@ -1,0 +1,52 @@
+#!/usr/bin/env zsh
+
+DOTFILES_CACHE_DIR=$DOTFILES_DIR/cache
+DOTFILES_BIN_DIR=$DOTFILES_DIR/bin
+UPDATE_DOTFILES_DAYS=13
+
+function _current_epoch() {
+  bc <<< ($(date +%s) / 60 / 60 / 24)
+}
+
+function _update_dotfiles_update() {
+  echo "LAST_EPOCH=$(_current_epoch)" >! $DOTFILES_CACHE_DIR/.dot-update
+}
+
+function _upgrade_dotfiles() {
+	$DOTFILES_BIN_DIR/dot-upgrade
+	# update the .dot-update file
+	_update_dotfiles_update
+}
+
+# Cancel upgrade if the current user doesn't have write permissions for the
+# dotfiles directory.
+[[ -w "$DOTFILES_DIR" ]] || return 0
+
+# Cancel upgrade if git is unavailable on the system
+whence git >/dev/null || return 
+
+if mkdir "$DOTFILES_CACHE_DIR/update.lock" 2>/dev/null; then    
+  if [ -f $DOTFILES_CACHE_DIR/.dot-update ]; then
+    . $DOTFILES_CACHE_DIR/.dot-update
+
+    if [[ -z "$LAST_EPOCH" ]]; then
+      _update_dotfiles_update
+      rmdir "$DOTFILES_CACHE_DIR/update.lock"
+      return 0
+    fi
+
+    epoch_diff=$(($(_current_epoch) - $LAST_EPOCH))
+    if [ $epoch_diff -gt $UPDATE_DOTFILES_DAYS ]; then
+        echo "[Dotfiles] Would you like to update? [Y/n]: \c"
+        read line
+        if [[ "$line" == Y* ]] || [[ "$line" == y* ]] || [ -z "$line" ]; then
+          _upgrade_dotfiles
+        else
+          _update_dotfiles_update
+        fi
+    fi
+  else
+    _update_dotfiles_update
+  fi
+  rmdir "$DOTFILES_CACHE_DIR/update.lock"
+fi

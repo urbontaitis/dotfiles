@@ -1,0 +1,18 @@
+#!/bin/sh
+
+SEARCH_FOR_FILE=$1
+PATH_TO_WORK=$2
+COMBINED_FILE_NAME=$3
+
+COMBINED_FILE_PATH=$PATH_TO_WORK/$COMBINED_FILE_NAME
+
+# remove existing file
+if [ -f $COMBINED_FILE_PATH ] 
+then
+    echo "Removing $COMBINED_FILE_PATH"
+    rm $COMBINED_FILE_PATH
+fi
+
+echo "Looking for $SEARCH_FOR_FILE"
+find -L $DOTFILES_DIR -name $SEARCH_FOR_FILE | while read founded_file ; do cat "$founded_file" >> "$COMBINED_FILE_PATH"; done
+echo "Done. Combined file is created: $COMBINED_FILE_PATH"
