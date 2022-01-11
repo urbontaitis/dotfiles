@@ -1,5 +1,0 @@
-tap "AdoptOpenJDK/openjdk"
-
-cask "adoptopenjdk8"
-cask "adoptopenjdk11"
-cask "adoptopenjdk"

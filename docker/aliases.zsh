@@ -1,5 +1,5 @@
 alias d='docker $*'
-alias d-c='docker-compose $*'
+alias d-c='docker compose $*'
 alias d-b='docker build . -t ${PWD##*/}:latest'
 alias d-r='docker run ${PWD##*/}:latest'
 alias d-b-arm='docker buildx build --platform linux/arm/v7 -t ${PWD##*/}:latest --load .'
