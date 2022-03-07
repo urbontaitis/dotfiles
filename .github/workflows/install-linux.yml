@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04] 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Create fake gitconfig.local.symlink
       run: cp ./git/gitconfig.local.symlink.example ./git/gitconfig.local.symlink
     - name: Execute bootstrap
