@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [macOS-latest] 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
     - name: Check versions of pre-installed software/system
       run: ./.cisupport/pre.sh
     - name: Create fake gitconfig.local.symlink
