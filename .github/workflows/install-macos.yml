@@ -1,11 +1,11 @@
 name: install-macos
 
-on: 
-  push:
-    branches:
-    - master
-  schedule:
-    - cron:  '0 13 * * 6'
+# on: 
+#   push:
+#     branches:
+#     - master
+#   schedule:
+#     - cron:  '0 13 * * 6'
 
 jobs:
   build:
